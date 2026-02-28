@@ -1,0 +1,10 @@
+# Nix build results
+result
+result-*
+
+# direnv
+.direnv/
+
+# Editor / OS
+*.swp
+.DS_Store
