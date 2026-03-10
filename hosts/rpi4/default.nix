@@ -5,7 +5,6 @@
 {
   imports = [
     ../../core
-    ./users.nix
     ./hardware.nix
   ];
 }

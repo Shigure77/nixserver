@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration for self-hosted servers (Raspberry Pi 3 B & 4)";
+  description = "NixOS configuration for self-hosted servers (Raspberry Pi 3 B & 4, Lenovo ThinkCentre M90q Gen 3)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
@@ -19,10 +19,9 @@
   };
 
   outputs = { self, nixpkgs, nixos-hardware, home-manager, nix-topology, nvf }: let
-    system = "aarch64-linux";
-
     # Build a NixOS system for a host (host module lives under hosts/<name>/).
-    mkSystem = hostName: hostModule: nixpkgs.lib.nixosSystem {
+    # system: "aarch64-linux" for Raspberry Pi, "x86_64-linux" for ThinkCentre M90q etc.
+    mkSystem = hostName: hostModule: system: nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = { inherit nixos-hardware nix-topology nvf; };
       modules = [
@@ -38,14 +37,15 @@
     };
   in {
     nixosConfigurations = {
-      rpi3 = mkSystem "rpi3" ./hosts/rpi3;
-      rpi4 = mkSystem "rpi4" ./hosts/rpi4;
+      rpi3 = mkSystem "rpi3" ./hosts/rpi3 "aarch64-linux";
+      rpi4 = mkSystem "rpi4" ./hosts/rpi4 "aarch64-linux";
+      m90q = mkSystem "m90q" ./hosts/m90q "x86_64-linux";
     };
 
-    # Build topology: nix build .#topology.config.output
+    # Build topology: nix build .#topology.config.output (uses current system for pkgs)
     topology = import nix-topology {
       pkgs = import nixpkgs {
-        inherit system;
+        system = builtins.currentSystem;
         overlays = [ nix-topology.overlays.default ];
       };
       modules = [

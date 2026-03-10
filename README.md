@@ -1,13 +1,13 @@
 # NixPiServer
 
-NixOS flake for self-hosted servers (Raspberry Pi 3 B and 4), with Bash, Gruvbox Dark theme, and common server tooling.
+NixOS flake for self-hosted servers (Raspberry Pi 3 B, 4, and Lenovo ThinkCentre M90q Gen 3), with Bash, Gruvbox Dark theme, and common server tooling.
 
 Layout follows the [core / home / hosts structure](https://discourse.nixos.org/t/how-do-you-structure-your-nixos-configs/65851): system-wide config in **core/**, user config in **home/**, and per-machine config in **hosts/**.
 
 ## Requirements
 
 - Nix with flakes enabled
-- For deployment: a Raspberry Pi 3 B or 4 with NixOS (e.g. SD image from [NixOS on ARM](https://nixos.wiki/wiki/NixOS_on_ARM))
+- For deployment: a Raspberry Pi 3 B or 4 with NixOS (e.g. SD image from [NixOS on ARM](https://nixos.wiki/wiki/NixOS_on_ARM)), or a Lenovo ThinkCentre M90q Gen 3 (x86_64) with NixOS (e.g. [minimal ISO](https://nixos.org/download.html))
 
 ## Layout
 
@@ -33,15 +33,19 @@ Layout follows the [core / home / hosts structure](https://discourse.nixos.org/t
     │   ├── default.nix      # Imports core, users, hardware
     │   ├── users.nix        # users.users + home-manager
     │   └── hardware.nix     # nixos-hardware RPi 3
-    └── rpi4/
+    ├── rpi4/
+    │   ├── default.nix
+    │   ├── users.nix
+    │   └── hardware.nix      # nixos-hardware RPi 4
+    └── m90q/                 # Lenovo ThinkCentre M90q Gen 3 (x86_64)
         ├── default.nix
         ├── users.nix
-        └── hardware.nix      # nixos-hardware RPi 4
+        └── hardware.nix      # nixos-hardware common-pc + common-pc-ssd, GRUB/EFI
 ```
 
 - **core/** – Shared NixOS modules (boot, packages, OpenSSH, Docker, NFS, nixpkgs). Every host pulls these in via `hosts/<name>/default.nix`.
 - **home/** – Shared Home Manager config (theme, cli, git, nvf, packages). Each host’s `users.nix` sets `home-manager.users.<username>.imports = [ ../../home ]`.
-- **hosts/rpi3** and **hosts/rpi4** – Per-host entrypoint: `default.nix` imports core + `users.nix` + `hardware.nix`.
+- **hosts/rpi3**, **hosts/rpi4**, **hosts/m90q** – Per-host entrypoint: `default.nix` imports core + `users.nix` + `hardware.nix`.
 
 ## Configure before first deploy
 
