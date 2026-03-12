@@ -8,6 +8,13 @@
     yazi
     duf
     fastfetch
+    lazygit
+    lazyssh
+    lazydocker
+    lazyjournal
+    eza
+    batman
+    
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
   ];
 

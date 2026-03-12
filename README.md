@@ -1,4 +1,4 @@
-# NixPiServer
+# nixserver
 
 NixOS flake for self-hosted servers (Raspberry Pi 3 B, 4, and Lenovo ThinkCentre M90q Gen 3), with Bash, Gruvbox Dark theme, and common server tooling.
 

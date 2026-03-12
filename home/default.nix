@@ -5,6 +5,7 @@
 {
   imports = [
     ./theme.nix
+    ./aliases.nix
     ./cli.nix
     ./git.nix
     ./nvf.nix
