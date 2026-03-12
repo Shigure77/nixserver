@@ -19,6 +19,7 @@
     cfp = "(){ readlink -f $1 | xclip -selection clipboard }"; # copy file path to clipboard
     rm = "rm -ir"
     grep = "grep --color=auto"
+    rsync = "rsync -auhPA --info=progress2"
 
     #Utlitities
     cat = "bat";
