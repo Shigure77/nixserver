@@ -14,7 +14,9 @@
   };
 
   home-manager.users.${username} = {
-    imports = [ ../home ];
+    imports = [ ../home ../apps ];
+    # Compatibility lock for stateful data; set once at first install and leave unchanged.
+    # You already use the latest home-manager (flake input master); this does not control that.
     home.stateVersion = "24.11";
   };
 }
