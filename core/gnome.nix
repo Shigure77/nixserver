@@ -13,7 +13,7 @@
   environment.gnome.excludePackages = with pkgs; [
     nautilus
     gnome-console
-    gnome-extensions
+    gnome-extension-manager
     gnome-system-monitor
     gnome-logs
     gnome-disk-utility

@@ -11,3 +11,5 @@ result-*
 
 
 flake.lock
+
+**/hardware.nix
