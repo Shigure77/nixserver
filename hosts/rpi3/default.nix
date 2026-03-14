@@ -5,6 +5,6 @@
 {
   imports = [
     ../../core
-    ./hardware.nix
+    ./hardware-configuration.nix
   ];
 }
