@@ -2,7 +2,7 @@
 
 NixOS flake for self-hosted servers (Raspberry Pi 3 B, 4, and Lenovo ThinkCentre M90q Gen 3), with Bash, Gruvbox Dark theme, and common server tooling.
 
-Layout follows the [core / home / hosts structure](https://discourse.nixos.org/t/how-do-you-structure-your-nixos-configs/65851): system-wide config in **core/**, user config in **home/**, and per-machine config in **hosts/**.
+Layout follows the [core / home / hosts structure](https://discourse.nixos.org/t/how-do-you-structure-your-nixos-configs/65851): system-wide config in **modules/core/**, user config in **modules/home/**, optional apps in **modules/apps/**, and per-machine config in **hosts/**.
 
 ## Requirements
 
@@ -17,50 +17,54 @@ Layout follows the [core / home / hosts structure](https://discourse.nixos.org/t
 
 ```
 ├── flake.nix
-├── core/                    # System-wide common
-│   ├── default.nix          # Imports all core modules
-│   ├── boot.nix
-│   ├── packages.nix
-│   ├── openssh.nix
-│   ├── docker.nix
-│   ├── nfs.nix
-│   └── nixpkgs.nix
-├── home/                    # Home Manager common
-│   ├── default.nix          # Imports all home modules
-│   ├── theme.nix            # Gruvbox Dark (Oh My Posh)
-│   ├── cli.nix              # Bash, fastfetch
-│   ├── git.nix
-│   ├── nvf.nix
-│   └── packages.nix
-└── hosts/
-    ├── rpi3/
-    │   ├── default.nix      # Imports core, users, hardware
-    │   ├── users.nix        # users.users + home-manager
-    │   └── hardware.nix     # nixos-hardware RPi 3
-    ├── rpi4/
-    │   ├── default.nix
-    │   ├── users.nix
-    │   └── hardware.nix      # nixos-hardware RPi 4
-    └── m90q/                 # Lenovo ThinkCentre M90q Gen 3 (x86_64)
-        ├── default.nix
-        ├── users.nix
-        └── hardware.nix      # nixos-hardware common-pc + common-pc-ssd, GRUB/EFI
+├── modules/
+│   ├── core/                # System-wide common
+│   │   ├── default.nix      # Imports all core modules
+│   │   ├── boot.nix
+│   │   ├── gnome.nix        # GDM + GNOME (import from desktop hosts only)
+│   │   ├── packages.nix
+│   │   ├── openssh.nix
+│   │   ├── docker.nix
+│   │   ├── nfs.nix
+│   │   ├── nixpkgs.nix
+│   │   └── users.nix       # users.users + home-manager
+│   ├── home/                # Home Manager common
+│   │   ├── default.nix
+│   │   ├── theme.nix        # Gruvbox Dark (Oh My Posh)
+│   │   ├── cli.nix
+│   │   ├── git.nix
+│   │   ├── nvf.nix
+│   │   └── packages.nix
+│   └── apps/
+│       ├── default.nix
+│       └── ...
+├── hosts/
+│   ├── rpi3/
+│   │   ├── default.nix      # Imports modules/core, hardware
+│   │   └── hardware-configuration.nix
+│   ├── rpi4/
+│   │   ├── default.nix
+│   │   └── hardware-configuration.nix
+│   └── m90q/                # Lenovo ThinkCentre M90q Gen 3 (x86_64)
+│       ├── default.nix      # Imports modules/core, modules/core/gnome.nix, hardware
+│       └── hardware.nix
+└── assets/                  # Wallpaper / lock screen images (GNOME)
 ```
 
-- **core/** – Shared NixOS modules (boot, packages, OpenSSH, Docker, NFS, nixpkgs). Every host pulls these in via `hosts/<name>/default.nix`.
-- **home/** – Shared Home Manager config (theme, cli, git, nvf, packages). Each host’s `users.nix` sets `home-manager.users.<username>.imports = [ ../../home ]`.
-- **hosts/rpi3**, **hosts/rpi4**, **hosts/m90q** – Per-host entrypoint: `default.nix` imports core + `users.nix` + `hardware.nix`.
+- **modules/core/** – Shared NixOS modules. Every host imports `../../modules/core`; m90q also imports `../../modules/core/gnome.nix` for the desktop.
+- **modules/home/** – Shared Home Manager config. Core `users.nix` sets `home-manager.users.<username>.imports = [ ../home ]`.
+- **hosts/** – Per-host entrypoint: `default.nix` imports core (+ gnome for m90q) and host hardware.
 
 ## Configure before first deploy
 
 1. **File systems / swap**  
-   On the Pi (or from an installer root), run `nixos-generate-config --root /mnt` and copy the generated `fileSystems` and `swapDevices` into **`hosts/rpi3/hardware.nix`** or **`hosts/rpi4/hardware.nix`** (or import a separate `hardware-configuration.nix` there).
+   On the Pi (or from an installer root), run `nixos-generate-config --root /mnt` and copy the generated `fileSystems` and `swapDevices` into **`hosts/rpi3/hardware-configuration.nix`** or **`hosts/rpi4/hardware-configuration.nix`** (or **`hosts/m90q/hardware.nix`** for the M90q).
 
 2. **User**  
-   Default user is `keion` (see `username ? "keion"` in **`hosts/*/users.nix`**). Override per host by passing `username` in the flake’s `specialArgs` if needed, or edit `users.nix` and the corresponding `home-manager.users.<name>` key.
+   Default user is `keion` (see `username ? "keion"` in **`modules/core/users.nix`**). Override per host by passing `username` in the flake’s `specialArgs` if needed.
 
 3. **Git**  
-   Set `programs.git.userName` and `programs.git.userEmail` in **`home/git.nix`**.
+   Set `programs.git.userName` and `programs.git.userEmail` in **`modules/home/git.nix`**.
 
 ## Build and deploy
 
@@ -82,7 +86,7 @@ Layout follows the [core / home / hosts structure](https://discourse.nixos.org/t
 ## Adding a new host
 
 1. Copy **`hosts/rpi4`** (or rpi3) to **`hosts/<newhost>`**.
-2. In **`hosts/<newhost>/hardware.nix`**, switch the nixos-hardware import and add fileSystems/swapDevices as needed.
+2. In **`hosts/<newhost>/hardware.nix`** (or `hardware-configuration.nix`), switch the nixos-hardware import and add fileSystems/swapDevices as needed.
 3. In **`flake.nix`**, add e.g. `newhost = mkSystem "newhost" ./hosts/newhost;` to `nixosConfigurations`.
 
-Theme-related options live in **`home/theme.nix`** so you can switch theme later by editing or replacing that file.
+Theme-related options live in **`modules/home/theme.nix`** so you can switch theme later by editing or replacing that file.

@@ -1,8 +1,12 @@
 # GNOME + GDM. Import from a host that should have a desktop (e.g. hosts/m90q/default.nix).
+# Lock screen and wallpaper use assets/ when the flake is built with --flake . (self in specialArgs).
 # To exclude default apps, add or remove entries in environment.gnome.excludePackages.
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, self ? null, ... }:
 
+let
+  lockScreenUri = lib.optionalString (self != null) "file://${toString (self + "/assets/nix.png")}";
+in
 {
   services.xserver = {
     displayManager.gdm.enable = true;
@@ -17,5 +21,15 @@
     gnome-system-monitor
     gnome-logs
     gnome-disk-utility
+  ];
+
+  # GDM lock screen background (nix.png)
+  programs.dconf.profiles.gdm.databases = lib.mkIf (self != null) [
+    {
+      settings."org/gnome/desktop/screensaver" = {
+        picture-uri = lockScreenUri;
+        picture-uri-dark = lockScreenUri;
+      };
+    }
   ];
 }

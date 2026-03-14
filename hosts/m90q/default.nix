@@ -4,8 +4,8 @@
 
 {
   imports = [
-    ../../core
-    ../../core/gnome.nix
+    ../../modules/core
+    ../../modules/core/gnome.nix
     ./hardware.nix
   ];
 }

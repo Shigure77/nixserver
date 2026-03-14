@@ -5,6 +5,7 @@
 {
   imports = [
     ./theme.nix
+    ./gnome-desktop.nix
     ./aliases.nix
     ./cli.nix
     ./git.nix

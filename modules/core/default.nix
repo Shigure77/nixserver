@@ -5,7 +5,6 @@
 {
   imports = [
     ./boot.nix
-    ./gnome.nix
     ./nix.nix
     ./packages.nix
     ./openssh.nix
