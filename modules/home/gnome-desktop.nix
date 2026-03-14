@@ -4,7 +4,7 @@
 { config, lib, nixserverFlake ? null, ... }:
 
 lib.mkIf (nixserverFlake != null) {
-  programs.dconf.enable = true;
+  # dconf.enable defaults to true on Linux; just set settings
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
