@@ -8,3 +8,6 @@ result-*
 # Editor / OS
 *.swp
 .DS_Store
+
+
+flake.lock

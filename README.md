@@ -6,7 +6,11 @@ Layout follows the [core / home / hosts structure](https://discourse.nixos.org/t
 
 ## Requirements
 
-- Nix with flakes enabled
+- Nix with flakes and nix-command enabled. If `nix build` fails with "experimental Nix feature … is disabled", add to `~/.config/nix/nix.conf`:
+  ```ini
+  experimental-features = nix-command flakes
+  ```
+  (Create the file and directory if needed.) Run `nix build` as your user, not with `sudo`.
 - For deployment: a Raspberry Pi 3 B or 4 with NixOS (e.g. SD image from [NixOS on ARM](https://nixos.wiki/wiki/NixOS_on_ARM)), or a Lenovo ThinkCentre M90q Gen 3 (x86_64) with NixOS (e.g. [minimal ISO](https://nixos.org/download.html))
 
 ## Layout

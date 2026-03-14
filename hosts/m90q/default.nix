@@ -5,6 +5,7 @@
 {
   imports = [
     ../../core
+    ../../core/gnome.nix
     ./hardware.nix
   ];
 }

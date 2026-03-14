@@ -23,7 +23,7 @@
     # system: "aarch64-linux" for Raspberry Pi, "x86_64-linux" for ThinkCentre M90q etc.
     mkSystem = hostName: hostModule: system: nixpkgs.lib.nixosSystem {
       inherit system;
-      specialArgs = { inherit nixos-hardware nix-topology nvf; };
+      specialArgs = { inherit nixos-hardware nix-topology nvf; username = "keion"; };
       modules = [
         hostModule
         home-manager.nixosModules.home-manager
