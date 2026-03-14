@@ -7,5 +7,6 @@
     ../../modules/core
     ../../modules/core/gnome.nix
     ./hardware.nix
+    ./hardware-configuration.nix   # fileSystems, swap (from nixos-generate-config)
   ];
 }

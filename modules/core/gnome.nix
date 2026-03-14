@@ -8,10 +8,8 @@ let
   lockScreenUri = lib.optionalString (self != null) "file://${toString (self + "/assets/nix.png")}";
 in
 {
-  services.xserver = {
-    displayManager.gdm.enable = true;
-    desktopManager.gnome.enable = true;
-  };
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   # Remove default GNOME apps you don't want (add/remove as needed)
   environment.gnome.excludePackages = with pkgs; [
