@@ -10,7 +10,7 @@ result-*
 .DS_Store
 
 
-flake.lock
+./flake.lock
 
 **/hardware.nix
 **/hardware-configuration.nix

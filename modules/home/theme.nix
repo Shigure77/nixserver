@@ -1,22 +1,9 @@
-# Theme configuration: Gruvbox Dark.
-# Kept separate so you can switch theme later by changing this file or
-# swapping the import for another theme module (e.g. home/theme-catppuccin.nix).
+# Theme: base16 Icy (dark) via nix-colors.
+# Change colorScheme to switch (e.g. nix-colors.colorSchemes.dracula).
+# Use config.colorScheme.palette.base00 … base0F in other modules.
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, nix-colors, ... }:
 
 {
-  # Oh My Posh: use official gruvbox theme (dark).
-  # Change useTheme here to switch prompt theme (e.g. "catppuccin", "powerline").
-  programs.oh-my-posh = {
-    enable = true;
-    enableBashIntegration = true;
-    useTheme = "gruvbox";
-    # Optional: custom theme path if you use a custom .omp.json
-    # theme = builtins.toPath ./gruvbox.omp.json;
-  };
-
-  # Bash: optional Gruvbox-dark-friendly terminal color hint.
-  home.sessionVariables = {
-    COLORFGBG = "15;235";
-  };
+  colorScheme = nix-colors.colorSchemes.icy;
 }

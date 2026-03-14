@@ -10,9 +10,9 @@
     fastfetch
     eza
     bat
-    
     nerd-fonts.jetbrains-mono
   ];
 
   fonts.fontconfig.enable = true;
+  # For Nerd Font symbols (icons) to show: set your terminal/IDE font to "JetBrainsMono Nerd Font".
 }
