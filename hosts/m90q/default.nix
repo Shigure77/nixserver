@@ -4,8 +4,10 @@
 
 {
   imports = [
-    ../../modules/core
+    ../../modules/core/default.nix
     ../../modules/core/gnome.nix
+    ../../modules/apps/default.nix
+    ../../modules/home/default.nix
     ./hardware-configuration.nix   # fileSystems, swap (from nixos-generate-config)
   ];
 }

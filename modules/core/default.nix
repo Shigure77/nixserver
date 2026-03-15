@@ -11,6 +11,7 @@
     ./docker.nix
     ./nfs.nix
     ./nixpkgs.nix
+    ./stylix.nix
     ./users.nix
   ];
 }

@@ -17,9 +17,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-colors.url = "github:misterio77/nix-colors";
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, home-manager, nix-topology, nvf, nix-colors }: let
+  outputs = { self, nixpkgs, nixos-hardware, home-manager, nix-topology, nvf, nix-colors, stylix }: let
     # Build a NixOS system for a host (host module lives under hosts/<name>/).
     # system: "aarch64-linux" for Raspberry Pi, "x86_64-linux" for ThinkCentre M90q etc.
     mkSystem = hostName: hostModule: system: nixpkgs.lib.nixosSystem {
@@ -28,6 +32,7 @@
       modules = [
         hostModule
         home-manager.nixosModules.home-manager
+        stylix.nixosModules.stylix
         nix-topology.nixosModules.default
         {
           networking.hostName = hostName;
