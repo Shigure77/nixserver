@@ -1,34 +1,31 @@
-# Theme: base16 Icy (dark) via nix-colors.
-# From https://github.com/icyphox/base16-icy-scheme (same palette as nix-colors.colorSchemes.icy).
-# Change colorScheme to switch (e.g. nix-colors.colorSchemes.dracula).
-# Use config.colorScheme.palette.base00 … base0F in other modules.
+# Theme: nix-colors scheme. Other modules use config.colorScheme.palette (e.g. base00 … base0F).
+# Switch scheme: change the colorSchemes.<name> below (e.g. dracula, gruvbox-dark-medium).
 
-{ config, lib, pkgs, nix-colors, ... }:
+{ pkgs, config, nix-colors, ... }:
 
-let
-  scheme = nix-colors.colorSchemes.icy;
-  p = scheme.palette;
-  paletteList = [
-    p.base00 p.base01 p.base02 p.base03 p.base04 p.base05 p.base06 p.base07
-    p.base08 p.base09 p.base0A p.base0B p.base0C p.base0D p.base0E p.base0F
-  ];
-  hex = c: "#${c}";
-in
 {
-  colorScheme = scheme;
 
-  # Apply Icy to GNOME Terminal so the theme is visible (nix-colors only sets the palette otherwise).
+  imports = [
+   nix-colors.homeManagerModules.default
+  ];
+
+  home.packages = with pkgs; [
+    nix-colors.packages.${system}.default
+  ];
+
+  colorScheme = nix-colors.colorSchemes.icy;
+
   programs.gnome-terminal = {
     enable = true;
     themeVariant = "dark";
     profile."b1dcc9dd-5262-4d8d-a863-c897e6d979b9" = {
       default = true;
       visibleName = "Icy";
-      colors = {
-        foregroundColor = hex p.base05;
-        backgroundColor = hex p.base00;
+      colors = with config.colorScheme.palette; {
+        foregroundColor = "#${base05}";
+        backgroundColor = "#${base00}";
         boldColor = null;
-        palette = map hex paletteList;
+        palette = map (c: "#${c}") [ base00 base01 base02 base03 base04 base05 base06 base07 base08 base09 base0A base0B base0C base0D base0E base0F ];
         cursor = null;
         highlight = null;
       };

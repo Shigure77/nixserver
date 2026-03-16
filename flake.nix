@@ -36,7 +36,7 @@
         nix-topology.nixosModules.default
         {
           networking.hostName = hostName;
-          home-manager.extraSpecialArgs = { inherit nvf nix-colors; nixserverFlake = self; };
+          home-manager.extraSpecialArgs = { inherit nvf nix-colors; };
           home-manager.sharedModules = [ nvf.homeManagerModules.default nix-colors.homeManagerModules.default ];
         }
       ];
