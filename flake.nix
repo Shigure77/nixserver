@@ -1,8 +1,15 @@
 {
-  description = "NixOS configuration for self-hosted servers (Raspberry Pi 3 B & 4, Lenovo ThinkCentre M90q Gen 3)";
+  description = "NixOS configuration for self-hosted homelab servers (Raspberry Pi 3 B & 4, Lenovo ThinkCentre M90q Gen 3)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+    import-tree.url = "github:vic/import-tree";
+
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     home-manager = {
       url = "github:nix-community/home-manager/master";
@@ -23,40 +30,10 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, home-manager, nix-topology, nvf, nix-colors, stylix }: let
-    # Build a NixOS system for a host (host module lives under hosts/<name>/).
-    # system: "aarch64-linux" for Raspberry Pi, "x86_64-linux" for ThinkCentre M90q etc.
-    mkSystem = hostName: hostModule: system: nixpkgs.lib.nixosSystem {
-      inherit system;
-      specialArgs = { inherit nixos-hardware nix-topology nvf nix-colors self; username = "keion"; };
-      modules = [
-        hostModule
-        home-manager.nixosModules.home-manager
-        stylix.nixosModules.stylix
-        nix-topology.nixosModules.default
-        {
-          networking.hostName = hostName;
-          home-manager.extraSpecialArgs = { inherit nvf nix-colors; };
-          home-manager.sharedModules = [ nvf.homeManagerModules.default nix-colors.homeManagerModules.default ];
-        }
-      ];
-    };
-  in {
-    nixosConfigurations = {
-      rpi3 = mkSystem "rpi3" ./hosts/rpi3 "aarch64-linux";
-      rpi4 = mkSystem "rpi4" ./hosts/rpi4 "aarch64-linux";
-      m90q = mkSystem "m90q" ./hosts/m90q "x86_64-linux";
-    };
-
-    # Build topology: nix build .#topology.config.output (uses current system for pkgs)
-    topology = import nix-topology {
-      pkgs = import nixpkgs {
-        system = builtins.currentSystem;
-        overlays = [ nix-topology.overlays.default ];
-      };
-      modules = [
-        { topology.nixosConfigurations = self.nixosConfigurations; }
-      ];
-    };
-  };
+  # Thin Dendritic entry: every module lives under flake/, features/, hosts/
+  # and is auto-imported. No logic here. See .agents/rules/lang/nix.md.
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} (
+      inputs.import-tree [./flake ./features ./hosts]
+    );
 }

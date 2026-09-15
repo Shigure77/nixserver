@@ -10,9 +10,8 @@ result-*
 .DS_Store
 
 
-./flake.lock
+# NOTE: flake.lock MUST be committed (flakes are reproducible only when pinned).
+# NOTE: hardware.nix files are tracked on purpose — flakes only see git-tracked
+# files, so an untracked hardware file is invisible to `nixos-rebuild`.
 
-**/hardware.nix
-**/hardware-configuration.nix
-
-./examples
+examples/

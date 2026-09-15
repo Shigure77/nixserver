@@ -1,92 +1,94 @@
 # nixserver
 
-NixOS flake for self-hosted servers (Raspberry Pi 3 B, 4, and Lenovo ThinkCentre M90q Gen 3), with Bash, Gruvbox Dark theme, and common server tooling.
+One NixOS flake for the whole homelab — Raspberry Pi 3 B, Raspberry Pi 4
+(`aarch64`), and a Lenovo ThinkCentre M90q Gen 3 (`x86_64`). Built with the
+**Dendritic Pattern** (flake-parts + `import-tree`): every `.nix` file is an
+auto-imported feature module, and a host is just a short *selection* of
+features. Adding a machine ≈ new `hosts/<name>.nix` + its hardware.
 
-Layout follows the [core / home / hosts structure](https://discourse.nixos.org/t/how-do-you-structure-your-nixos-configs/65851): system-wide config in **modules/core/**, user config in **modules/home/**, optional apps in **modules/apps/**, and per-machine config in **hosts/**.
+See `.agents/rules/project-goal.md` (why) and `.agents/rules/lang/nix.md`
+(Dendritic rules) for the design.
 
 ## Requirements
 
-- Nix with flakes and nix-command enabled. If `nix build` fails with "experimental Nix feature … is disabled", add to `~/.config/nix/nix.conf`:
+- Nix with flakes + nix-command enabled. If a command fails with "experimental
+  Nix feature … is disabled", add to `~/.config/nix/nix.conf`:
   ```ini
   experimental-features = nix-command flakes
   ```
-  (Create the file and directory if needed.) Run `nix build` as your user, not with `sudo`.
-- For deployment: a Raspberry Pi 3 B or 4 with NixOS (e.g. SD image from [NixOS on ARM](https://nixos.wiki/wiki/NixOS_on_ARM)), or a Lenovo ThinkCentre M90q Gen 3 (x86_64) with NixOS (e.g. [minimal ISO](https://nixos.org/download.html))
+- A target machine running NixOS (SD image from
+  [NixOS on ARM](https://nixos.wiki/wiki/NixOS_on_ARM) for the Pis, or the
+  [minimal ISO](https://nixos.org/download.html) for the M90q).
 
 ## Layout
 
 ```
-├── flake.nix
-├── modules/
-│   ├── core/                # System-wide common
-│   │   ├── default.nix      # Imports all core modules
-│   │   ├── boot.nix
-│   │   ├── gnome.nix        # GDM + GNOME (import from desktop hosts only)
-│   │   ├── packages.nix
-│   │   ├── openssh.nix
-│   │   ├── docker.nix
-│   │   ├── nfs.nix
-│   │   ├── nixpkgs.nix
-│   │   └── users.nix       # users.users + home-manager
-│   ├── home/                # Home Manager common
-│   │   ├── default.nix
-│   │   ├── theme.nix        # Gruvbox Dark (Oh My Posh)
-│   │   ├── cli.nix
-│   │   ├── git.nix
-│   │   ├── nvf.nix
-│   │   └── packages.nix
-│   └── apps/
-│       ├── default.nix
-│       └── ...
-├── hosts/
-│   ├── rpi3/
-│   │   ├── default.nix      # Imports modules/core, hardware
-│   │   └── hardware-configuration.nix
-│   ├── rpi4/
-│   │   ├── default.nix
-│   │   └── hardware-configuration.nix
-│   └── m90q/                # Lenovo ThinkCentre M90q Gen 3 (x86_64)
-│       ├── default.nix      # Imports modules/core, modules/core/gnome.nix, hardware
-│       └── hardware.nix
-└── assets/                  # Wallpaper / lock screen images (GNOME)
+flake.nix              # inputs + flake-parts entry + import-tree (no logic)
+flake/                 # flake-parts modules: systems, formatter, topology
+features/              # one concern per file; each = a named nixos/HM module
+  server-base.nix      #   bundle: the shared baseline every host selects
+  boot nix-settings nixpkgs openssh docker nfs users server-packages   (NixOS)
+  home-base shell git neovim user-packages                             (HM)
+  theme                #   Stylix (NixOS) + nix-colors palette (HM), desktop-only
+  desktop desktop-apps #   GNOME + GUI apps, desktop-only
+hosts/
+  rpi3.nix rpi4.nix m90q.nix   # thin: SELECT features + declare the config
+  _rpi3/ _rpi4/ _m90q/         # hardware.nix (underscore => import-tree ignores)
+assets/                # wallpaper / lock-screen images (desktop host)
+scripts/               # helper scripts
 ```
 
-- **modules/core/** – Shared NixOS modules. Every host imports `../../modules/core`; m90q also imports `../../modules/core/gnome.nix` for the desktop.
-- **modules/home/** – Shared Home Manager config. Core `users.nix` sets `home-manager.users.<username>.imports = [ ../home ]`.
-- **hosts/** – Per-host entrypoint: `default.nix` imports core (+ gnome for m90q) and host hardware.
+**How composition works:** features set `flake.nixosModules.<name>` and/or
+`flake.homeManagerModules.<name>`. A host *selects* names — enabling a feature
+is just listing it. `server-base` bundles the common server set; desktop-only
+hosts additionally select `theme`, `desktop`, `desktop-apps`.
 
 ## Configure before first deploy
 
-1. **File systems / swap**  
-   On the Pi (or from an installer root), run `nixos-generate-config --root /mnt` and copy the generated `fileSystems` and `swapDevices` into **`hosts/rpi3/hardware-configuration.nix`** or **`hosts/rpi4/hardware-configuration.nix`** (or **`hosts/m90q/hardware.nix`** for the M90q).
-
-2. **User**  
-   Default user is `keion` (see `username ? "keion"` in **`modules/core/users.nix`**). Override per host by passing `username` in the flake’s `specialArgs` if needed.
-
-3. **Git**  
-   Set `programs.git.userName` and `programs.git.userEmail` in **`modules/home/git.nix`**.
+1. **Hardware.** On each Pi run `nixos-generate-config` and paste the generated
+   `fileSystems` + `swapDevices` into `hosts/_rpi3/hardware.nix` /
+   `hosts/_rpi4/hardware.nix`. `hosts/_m90q/hardware.nix` is already populated.
+   These files are **git-tracked on purpose** — a flake can't see untracked
+   files.
+2. **User.** Default user is `keion` (hardcoded in `features/users.nix`).
+3. **Git identity.** Set name/email in `features/git.nix`.
 
 ## Build and deploy
 
-- **Build system (e.g. RPi 4):**
-  ```bash
-  nix build .#nixosConfigurations.rpi4.config.system.build.toplevel
-  ```
+```bash
+git add -A                                  # flakes only see git-tracked files
+nix flake lock                              # pin flake-parts + import-tree
+nix flake check                             # evaluate all hosts
+nix fmt                                     # alejandra (authoritative)
 
-- **Deploy (from a machine that can reach the Pi):**
-  ```bash
-  nixos-rebuild switch --flake .#rpi4 --target-host user@rpi4
-  ```
+nix build .#nixosConfigurations.m90q.config.system.build.toplevel
+nixos-rebuild switch --flake .#rpi4 --target-host user@rpi4   # deploy remotely
+nix build .#topology.config.output          # nix-topology diagram
+```
 
-- **Topology (nix-topology):**
-  ```bash
-  nix build .#topology.config.output
-  ```
+> The Pi hosts **fail fast** until their `hardware.nix` is filled (step 1) — that
+> is expected, not a bug.
 
 ## Adding a new host
 
-1. Copy **`hosts/rpi4`** (or rpi3) to **`hosts/<newhost>`**.
-2. In **`hosts/<newhost>/hardware.nix`** (or `hardware-configuration.nix`), switch the nixos-hardware import and add fileSystems/swapDevices as needed.
-3. In **`flake.nix`**, add e.g. `newhost = mkSystem "newhost" ./hosts/newhost;` to `nixosConfigurations`.
+1. Add `hosts/<name>.nix` selecting features, plus `hosts/_<name>/hardware.nix`
+   for its hardware.
+2. No `flake.nix` edit needed — `import-tree` picks up the new files (after
+   `git add`).
 
-Theme-related options live in **`modules/home/theme.nix`** so you can switch theme later by editing or replacing that file.
+## Modernization TODO
+
+This repo predates current `nixpkgs-unstable`; a few things need review/fixup
+(tracked so behaviour changes stay visible, not silent):
+
+- **`features/git.nix`** uses `programs.git.settings` — verify against current
+  Home-Manager (may need `userName`/`userEmail`/`extraConfig`).
+- **`features/theme.nix`** uses `programs.gnome-terminal` (HM), deprecated
+  upstream (GNOME dropped it). Candidate replacement: ptyxis/Console/foot. Tied
+  to the nix-colors palette, so replace deliberately.
+- **`features/shell.nix`** keeps some stale/personal aliases (`hms` →
+  `~/.config/nixos`, `nixhardware` → a NixOmarchy path, `xclip` on headless
+  hosts). Clean up.
+- **`allowUnfree`** is `false` globally; if `desktop-apps` (vscode extensions)
+  needs unfree, set it on the `m90q` host or in `desktop`.
+- Revisit `stateVersion` (`24.11`) once building on current unstable.
