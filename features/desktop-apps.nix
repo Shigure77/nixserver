@@ -1,9 +1,10 @@
 # Desktop GUI apps (user-level). Selected by desktop hosts only (m90q).
 {
-  flake.homeManagerModules.desktop-apps = {pkgs, ...}: {
+  flake.homeModules.desktop-apps = {pkgs, ...}: {
     home.packages = with pkgs; [
       ghostty
       alacritty
+      kitty
       lazydocker
       lazygit
       lazyjournal

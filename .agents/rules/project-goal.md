@@ -14,8 +14,6 @@ modules apply + declare its hardware".
 - **OS:** NixOS (flakes), `nixpkgs-unstable`. `home-manager` runs as a NixOS
   module (not standalone). Theming via `stylix` (Gruvbox Dark).
 - **Hosts (current):**
-  - `rpi3` — Raspberry Pi 3 B (`aarch64-linux`), headless server.
-  - `rpi4` — Raspberry Pi 4 (`aarch64-linux`), headless server.
   - `m90q` — Lenovo ThinkCentre M90q Gen 3 (`x86_64-linux`); the one desktop
     box (GDM + GNOME).
   - New homelab machines are expected to be added over time.
@@ -29,9 +27,8 @@ modules apply + declare its hardware".
   `modules/`; a host imports the shared set and adds only what's unique to it.
   Adding a machine should mean: new `hosts/<name>/`, its hardware, and a
   one-line entry in `flake.nix` — not copy-pasting system config.
-- **Server-first, mixed-arch aware.** Most hosts are headless ARM Pis; keep
-  desktop-only bits (GNOME, GUI apps) out of the default core so a Pi stays
-  lean. Don't hard-wire `x86_64`-only or `aarch64`-only assumptions into shared
+- **Server-first, mixed-arch aware.** Keep desktop-only bits (GNOME, GUI apps)
+  out of the default server core. Don't hard-wire arch assumptions into shared
   modules.
 - **Reproducible & deployable remotely.** Everything expressed in Nix, pinned
   via `flake.lock`; hosts build and deploy with

@@ -9,24 +9,25 @@
     modules =
       (with config.flake.nixosModules; [
         server-base
-        theme
+        stylix
+        fonts
         desktop
       ])
       ++ [
         inputs.home-manager.nixosModules.home-manager
-        inputs.stylix.nixosModules.stylix
         inputs.nix-topology.nixosModules.default
         ./_m90q/hardware.nix
         {
           networking.hostName = "m90q";
-          home-manager.users.keion.imports = with config.flake.homeManagerModules; [
+          home-manager.users.keion.imports = with config.flake.homeModules; [
             home-base
             shell
             git
             neovim
-            user-packages
-            theme
             desktop-apps
+            gh
+            qdirstat
+            superfile
           ];
         }
       ];

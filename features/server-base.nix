@@ -8,6 +8,6 @@
     docker
     nfs
     users
-    server-packages
+    shell-tools
   ];
 }

@@ -73,3 +73,9 @@ Living briefing. Read at the start of every turn. Format & rules:
   (2) `programs.git.settings` HM schema; (3) `programs.gnome-terminal` may be
   gone on unstable; (4) `allowUnfree=false` vs vscode-extensions; (5) rpi hosts
   fail until hardware filled (expected).
+
+- 2026 `[USER]` Pis dropped entirely: removed rpi3/rpi4 hosts+hardware, aarch64 system,
+  extlinux; boot.nix now systemd-boot (UEFI). Stylix split into `stylix.nix`
+  (ayu-dark, autoEnable default), `fonts.nix`, wallpaper in `desktop.nix`.
+  `server-packages`/`user-packages` removed; `shell-tools` now in `server-base`.
+  gh/qdirstat/superfile selected on m90q. `nix` here can't eval (store perms).

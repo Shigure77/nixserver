@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration for self-hosted homelab servers (Raspberry Pi 3 B & 4, Lenovo ThinkCentre M90q Gen 3)";
+  description = "NixOS configuration for self-hosted homelab servers (Lenovo ThinkCentre M90q Gen 3)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

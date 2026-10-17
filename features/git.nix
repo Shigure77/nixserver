@@ -1,6 +1,6 @@
 # Git user config.
 {
-  flake.homeManagerModules.git = {
+  flake.homeModules.git = {
     programs.git = {
       enable = true;
       settings = {

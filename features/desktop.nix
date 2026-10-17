@@ -1,9 +1,11 @@
 # GNOME + GDM desktop. Selected by desktop hosts only (currently m90q).
-# GDM lock-screen/background image comes from this flake's assets (self).
+# Wallpaper (stylix.image) and GDM lock-screen come from this flake's assets.
 {inputs, ...}: {
   flake.nixosModules.desktop = {pkgs, ...}: let
     lockScreenUri = "file://${inputs.self + "/assets/nix.png"}";
   in {
+    stylix.image = inputs.self + "/assets/nix-dark.png";
+
     services.displayManager.gdm.enable = true;
     services.desktopManager.gnome.enable = true;
 

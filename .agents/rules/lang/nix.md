@@ -94,7 +94,7 @@ entry that `import-tree`s every module. Keep it that way.
 flake.nix            # inputs + flake-parts entry + import-tree auto-import only
 flake/               # flake-parts modules (systems, formatter, ...)
 features/            # one concern per file; each contributes
-  nixpkgs.nix        #   flake.{overlays,nixosModules,homeManagerModules}.<name>
+  nixpkgs.nix        #   flake.{overlays,nixosModules,homeModules}.<name>
   desktop.nix
 hosts/
   <hostname>.nix     # thin: SELECTS features by name + declares configs
@@ -105,7 +105,7 @@ hosts/
 Conventions to preserve:
 
 - A feature sets `flake.nixosModules.<name>` and/or
-`flake.homeManagerModules.<name>`. Hosts compose by selecting those names
+`flake.homeModules.<name>`. Hosts compose by selecting those names
 (`with config.flake.nixosModules; [ ... ]`), not by `enable` flags.
 - Opt-in features that need secrets stay **commented in the host's list** so
 `nix flake check` is green without secrets present. Enabling == uncommenting.
