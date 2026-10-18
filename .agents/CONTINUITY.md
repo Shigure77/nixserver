@@ -79,3 +79,7 @@ Living briefing. Read at the start of every turn. Format & rules:
   (ayu-dark, autoEnable default), `fonts.nix`, wallpaper in `desktop.nix`.
   `server-packages`/`user-packages` removed; `shell-tools` now in `server-base`.
   gh/qdirstat/superfile selected on m90q. `nix` here can't eval (store perms).
+
+- 2026 `[USER]` Renamed host `m90q` -> `momo` (config key, `networking.hostName`,
+  `hosts/momo.nix`, `hosts/_momo/hardware.nix`, docs). Hardware-model mentions
+  (M90q Gen 3) kept as descriptions. Not evaluated (nix unavailable here).

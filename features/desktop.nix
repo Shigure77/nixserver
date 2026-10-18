@@ -1,4 +1,4 @@
-# GNOME + GDM desktop. Selected by desktop hosts only (currently m90q).
+# GNOME + GDM desktop. Selected by desktop hosts only (currently momo).
 # Wallpaper (stylix.image) and GDM lock-screen come from this flake's assets.
 {inputs, ...}: {
   flake.nixosModules.desktop = {pkgs, ...}: let

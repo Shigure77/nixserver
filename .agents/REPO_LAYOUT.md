@@ -28,8 +28,8 @@ features/                 # one concern per file; each contributes a named modul
   desktop.nix                                   # NixOS (GNOME+GDM, wallpaper), desktop-only
   desktop-apps.nix                              # HM (vscodium + GUI apps), desktop-only
 hosts/
-  m90q.nix                  # x86_64 desktop; server-base + stylix/fonts/desktop
-  _m90q/hardware.nix        # underscore => import-tree ignores; imported explicitly (real, generated)
+  momo.nix                  # x86_64 desktop; server-base + stylix/fonts/desktop
+  _momo/hardware.nix        # underscore => import-tree ignores; imported explicitly (real, generated)
 assets/                   # wallpaper / lock-screen images (desktop host)
 scripts/                  # helper shell scripts
 setup-server.sh           # bootstrap/provisioning helper

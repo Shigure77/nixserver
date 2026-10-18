@@ -1,10 +1,10 @@
-# Lenovo ThinkCentre M90q Gen 3 (x86_64) — the desktop host.
+# momo: Lenovo ThinkCentre M90q Gen 3 (x86_64) — the desktop host.
 {
   config,
   inputs,
   ...
 }: {
-  flake.nixosConfigurations.m90q = inputs.nixpkgs.lib.nixosSystem {
+  flake.nixosConfigurations.momo = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     modules =
       (with config.flake.nixosModules; [
@@ -16,9 +16,9 @@
       ++ [
         inputs.home-manager.nixosModules.home-manager
         inputs.nix-topology.nixosModules.default
-        ./_m90q/hardware.nix
+        ./_momo/hardware.nix
         {
-          networking.hostName = "m90q";
+          networking.hostName = "momo";
           home-manager.users.keion.imports = with config.flake.homeModules; [
             home-base
             shell

@@ -14,7 +14,7 @@ modules apply + declare its hardware".
 - **OS:** NixOS (flakes), `nixpkgs-unstable`. `home-manager` runs as a NixOS
   module (not standalone). Theming via `stylix` (Gruvbox Dark).
 - **Hosts (current):**
-  - `m90q` — Lenovo ThinkCentre M90q Gen 3 (`x86_64-linux`); the one desktop
+  - `momo` — Lenovo ThinkCentre M90q Gen 3 (`x86_64-linux`); the one desktop
     box (GDM + GNOME).
   - New homelab machines are expected to be added over time.
 - **Primary user:** `keion` (overridable per host via `specialArgs.username`).

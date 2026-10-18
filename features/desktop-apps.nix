@@ -1,4 +1,4 @@
-# Desktop GUI apps (user-level). Selected by desktop hosts only (m90q).
+# Desktop GUI apps (user-level). Selected by desktop hosts only (momo).
 {
   flake.homeModules.desktop-apps = {pkgs, ...}: {
     home.packages = with pkgs; [

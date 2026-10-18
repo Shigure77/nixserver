@@ -29,8 +29,8 @@ features/              # one concern per file; each = a named nixos/HM module
   home-base shell git gh qdirstat superfile neovim                     (HM)
   desktop desktop-apps #   GNOME + GUI apps, desktop-only
 hosts/
-  m90q.nix           # thin: SELECT features + declare the config
-  _m90q/             # hardware.nix (underscore => import-tree ignores)
+  momo.nix           # thin: SELECT features + declare the config
+  _momo/             # hardware.nix (underscore => import-tree ignores)
 assets/                # wallpaper / lock-screen images (desktop host)
 scripts/               # helper scripts
 ```
@@ -42,7 +42,7 @@ hosts additionally select `stylix`, `fonts`, `desktop`, `desktop-apps`.
 
 ## Configure before first deploy
 
-1. **Hardware.** `hosts/_m90q/hardware.nix` is already populated.
+1. **Hardware.** `hosts/_momo/hardware.nix` is already populated.
    It is **git-tracked on purpose** — a flake can't see untracked
    files.
 2. **User.** Default user is `keion` (hardcoded in `features/users.nix`).
@@ -56,8 +56,8 @@ nix flake lock                              # pin flake-parts + import-tree
 nix flake check                             # evaluate all hosts
 nix fmt                                     # alejandra (authoritative)
 
-nix build .#nixosConfigurations.m90q.config.system.build.toplevel
-nixos-rebuild switch --flake .#m90q --target-host user@m90q   # deploy remotely
+nix build .#nixosConfigurations.momo.config.system.build.toplevel
+nixos-rebuild switch --flake .#momo --target-host user@momo   # deploy remotely
 nix build .#topology.x86_64-linux.config.output          # nix-topology diagram
 ```
 
@@ -79,5 +79,5 @@ This repo predates current `nixpkgs-unstable`; a few things need review/fixup
   `~/.config/nixos`, `nixhardware` → a NixOmarchy path, `xclip` on headless
   hosts). Clean up.
 - **`allowUnfree`** is `false` globally; if `desktop-apps` (vscode extensions)
-  needs unfree, set it on the `m90q` host or in `desktop`.
+  needs unfree, set it on the `momo` host or in `desktop`.
 - Revisit `stateVersion` (`24.11`) once building on current unstable.
