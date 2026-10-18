@@ -1,7 +1,7 @@
 # nixserver
 
-One NixOS flake for the homelab — a Lenovo ThinkCentre M90q Gen 3 (`x86_64`). Built with the
-**Dendritic Pattern** (flake-parts + `import-tree`): every `.nix` file is an
+One NixOS flake for the homelab — a Lenovo ThinkCentre M90q Gen 3 (`x86_64`), hostname `momo`.
+Built with the **Dendritic Pattern** (flake-parts + `import-tree`): every `.nix` file is an
 auto-imported feature module, and a host is just a short *selection* of
 features. Adding a machine ≈ new `hosts/<name>.nix` + its hardware.
 
@@ -40,6 +40,27 @@ scripts/               # helper scripts
 is just listing it. `server-base` bundles the common server set; desktop-only
 hosts additionally select `stylix`, `fonts`, `desktop`, `desktop-apps`.
 
+## How nix-topology works
+
+[nix-topology](https://github.com/oddlama/nix-topology) generates network and
+infrastructure diagrams (SVG) from your NixOS configurations.
+
+- **Per-host module.** `hosts/momo.nix` imports `nix-topology.nixosModules.default`,
+  which adds `topology.*` options to the host.
+- **Global module.** `flake/topology.nix` evaluates nix-topology once per system,
+  passing `flake.nixosConfigurations` in, so it can read every host at once.
+  It needs a `pkgs` with `nix-topology.overlays.default` (already done there).
+- **Automatic data.** It pulls much of the picture from the NixOS config itself
+  (e.g. systemd-networkd interfaces, known services, containers, microVMs).
+- **Manual data.** Things Nix can't know — physical cables, switches, routers,
+  which network an interface belongs to — are declared with options such as
+  `topology.self.interfaces.<name>.network` or `topology.networks.<name>`.
+  Connections propagate network membership along links.
+- **Output.** `nix build .#topology.x86_64-linux.config.output` renders a
+  directory of SVGs: a physical-connection view and a network-centric view.
+
+Until interfaces and networks are declared, the diagram will be sparse.
+
 ## Configure before first deploy
 
 1. **Hardware.** `hosts/_momo/hardware.nix` is already populated.
@@ -58,7 +79,7 @@ nix fmt                                     # alejandra (authoritative)
 
 nix build .#nixosConfigurations.momo.config.system.build.toplevel
 nixos-rebuild switch --flake .#momo --target-host user@momo   # deploy remotely
-nix build .#topology.x86_64-linux.config.output          # nix-topology diagram
+nix build .#topology.x86_64-linux.config.output               # nix-topology diagram
 ```
 
 ## Adding a new host

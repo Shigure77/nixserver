@@ -15,7 +15,7 @@
       bat-extras.batman # man replacement (batman)
       btop # top replacement
       duf # df replacement
-      xclip # clipboard (cdp/cfp)
+      xclip # clipboard
       fzf
       fd # find replacement
       zoxide # cd replacement

@@ -11,8 +11,6 @@
     "..." = "cd ../..";
     "...." = "cd ../../..";
     c = "clear";
-    cdp = "pwd | xclip -selection clipboard";
-    cfp = "(){ readlink -f $1 | xclip -selection clipboard }";
     rm = "rm -ir";
     grep = "rg";
     rsync = "rsync -auhPA --info=progress2";
@@ -36,11 +34,7 @@
     dockdown = "docker compose down";
     dockpull = "docker compose pull";
     lazy = "lazydocker";
-
-    # docker context commands
-    hlb = "docker --context homelab";
-    hlbdc = "docker --context homelab stack deploy -c";
-    hlbrm = "docker --context homelab stack rm";
+    dockerservicenodes = "docker service ps $(docker service ls -q)";
 
     # ssh
     misato = "ssh misato";
@@ -48,9 +42,9 @@
     mephiston = "ssh mephiston";
 
     # Nix 
-    nrs = "sudo nixos-rebuild switch --flake ~/nixtalia#\${HOSTNAME}";
-    nrt = "sudo nixos-rebuild test --flake ~/nixtalia#\${HOSTNAME}";
-    nrb = "sudo nixos-rebuild boot --flake ~/nixtalia#\${HOSTNAME}";
+    nrs = "sudo nixos-rebuild switch --flake ~/nixserver#\${HOSTNAME}";
+    nrt = "sudo nixos-rebuild test --flake ~/nixserver#\${HOSTNAME}";
+    nrb = "sudo nixos-rebuild boot --flake ~/nixserver#\${HOSTNAME}";
     garbage = "nix-collect-garbage --delete-older-than 3d";
     se = "sudoedit";
     nixhardware = "nixos-generate-config --show-hardware-config > ~/nixtalia/hardware/$(hostname).generated.nix";
