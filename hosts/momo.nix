@@ -12,6 +12,7 @@
         stylix
         fonts
         desktop
+        base16-rose-pine
       ])
       ++ [
         inputs.home-manager.nixosModules.home-manager

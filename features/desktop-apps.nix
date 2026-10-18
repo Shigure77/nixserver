@@ -1,10 +1,12 @@
 # Desktop GUI apps (user-level). Selected by desktop hosts only (momo).
 {
   flake.homeModules.desktop-apps = {pkgs, ...}: {
+    # Enabled via their HM modules (not just installed) so Stylix can theme them.
+    programs.ghostty.enable = true;
+    programs.alacritty.enable = true;
+    programs.kitty.enable = true;
+
     home.packages = with pkgs; [
-      ghostty
-      alacritty
-      kitty
       lazydocker
       lazygit
       lazyjournal
