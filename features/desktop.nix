@@ -9,16 +9,6 @@
     services.displayManager.gdm.enable = true;
     services.desktopManager.gnome.enable = true;
 
-    # Trim default GNOME apps; add/remove as desired.
-    environment.gnome.excludePackages = with pkgs; [
-      nautilus
-      gnome-console
-      gnome-extension-manager
-      gnome-system-monitor
-      gnome-logs
-      gnome-disk-utility
-    ];
-
     programs.dconf.profiles.gdm.databases = [
       {
         settings."org/gnome/desktop/screensaver" = {
