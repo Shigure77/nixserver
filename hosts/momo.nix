@@ -13,6 +13,7 @@
         fonts
         desktop
         base16-rose-pine
+        swarm-firewall
         backup-user
       ])
       ++ [
