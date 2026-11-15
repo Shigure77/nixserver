@@ -13,6 +13,7 @@
         fonts
         desktop
         base16-rose-pine
+        backup-user
       ])
       ++ [
         inputs.home-manager.nixosModules.home-manager
@@ -29,6 +30,7 @@
             gh
             qdirstat
             superfile
+            devops
           ];
         }
       ];
